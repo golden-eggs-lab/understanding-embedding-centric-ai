@@ -4,6 +4,12 @@
 **Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Probability Reuse)  
 **Bottleneck Profile**: B1: 77.0±10.0%, B2: 10.5±6.5%, Total: 87.5±3.5%
 
+## Code Origin
+
+- **Upstream**: <https://github.com/mourga/contrastive-active-learning>
+- **Status**: Authors' released code, vendored unchanged in its core algorithmic logic. Auxiliary baselines under `acquisition/` (BatchBALD, ALPS) are vendored from their respective upstream repositories, with the URL annotated in each file's header comment.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV1: ANN backend via sklearn BallTree; IV2: probability cache across queries), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags (`--use_sklearn_ann`, `--cache_probabilities`) and is not modified.
+
 ## IV-Aligned Implementation
 
 | Invariant | Original Execution                                                 | IV-Aligned Execution                         |

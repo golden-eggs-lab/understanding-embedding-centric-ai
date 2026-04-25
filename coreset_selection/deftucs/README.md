@@ -4,6 +4,12 @@
 **Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Distance Reuse), IV3 (Partial Order → Top-k)  
 **Bottleneck Profile**: B1: 98.7±0.9%, B2: 0.7±0.3%, B3: 0.2±0.2%, Total: 99.5±0.5%
 
+## Code Origin
+
+- **Upstream**: not publicly released.
+- **Status**: Faithful reimplementation following the algorithmic specification and computational choices in the original paper.
+- **Notes**: The baseline and its IV-aligned variants share the same underlying libraries (FAISS, scikit-learn) and differ only in the execution-level restructurings described in the paper, selected via runtime flags within the same script.
+
 ## IV-Aligned Implementation
 
 | Invariant | Original Execution                          | IV-Aligned Execution                             |

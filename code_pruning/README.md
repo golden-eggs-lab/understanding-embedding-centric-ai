@@ -4,6 +4,12 @@
 **Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Distance Reuse), IV3 (Partial Order → Top-k)  
 **Bottleneck Profile**: B1: 40.0±18.0%, B2: 1.0±0.0%, B3: 1.0±0.0%, Total: 42.0±18.0%
 
+## Code Origin
+
+- **Upstream**: not publicly released.
+- **Status**: Faithful reimplementation following the algorithmic specification and computational choices in the original paper.
+- **Notes**: The baseline and its IV-aligned variants share the same underlying libraries (FAISS, NumPy, HuggingFace `datasets`) and differ only in the execution-level restructurings described in the paper, selected via runtime flags within the same script.
+
 ## IV-Aligned Implementation
 
 | Invariant | Original Execution                                   | IV-Aligned Execution                      |

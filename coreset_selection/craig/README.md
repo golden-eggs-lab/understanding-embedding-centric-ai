@@ -4,6 +4,12 @@
 **Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Residual Reuse)  
 **Bottleneck Profile**: B1: 80.0±9.0%, B2: 1.5±0.5%, Total: 81.5±8.5%
 
+## Code Origin
+
+- **Upstream**: <https://github.com/baharanm/craig>
+- **Status**: Authors' released code, vendored unchanged in its core algorithmic logic.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV1: ANN indexing; IV2: incremental residual update), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
+
 ## IV-Aligned Implementation
 
 | Invariant | Original Execution                                      | IV-Aligned Execution                              |

@@ -4,6 +4,12 @@
 **Invariants**: IV1 (Approximation → ANN with GPU)  
 **Bottleneck Profile**: B1: 86.5±8.5%, Total: 86.5±8.5%
 
+## Code Origin
+
+- **Upstream**: <https://github.com/deeplearning-wisc/knn-ood>
+- **Status**: Authors' released code, vendored unchanged in its core algorithmic logic.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV1: ANN search via FAISS-GPU IVF), and JSON/CSV result-output formatting. The original baseline path (FAISS Flat) is selected via runtime flags and is not modified.
+
 ## IV-Aligned Implementation
 
 | Invariant | Original Execution          | IV-Aligned Execution                       |

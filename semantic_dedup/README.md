@@ -7,6 +7,12 @@
 - SemDeDup: B2: 82.5±12.5%, Total: 82.5±12.5%
 - FairDeDup: B2: 89.5±9.5%, Total: 89.5±9.5%
 
+## Code Origin
+
+- **SemDeDup**: authors' released code from <https://github.com/facebookresearch/SemDeDup>, vendored unchanged in its core algorithmic logic.
+- **FairDeDup**: not publicly released; faithful reimplementation following the algorithmic specification in the original paper, structured as an extension of SemDeDup as described by the authors.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV1: ANN search; IV2: search-result reuse across ε thresholds), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
+
 ## IV-Aligned Implementation
 
 | Invariant | Original Execution                            | IV-Aligned Execution                            |

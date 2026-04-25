@@ -24,6 +24,25 @@ This repository contains the source code and experiment scripts for reproducing 
 | In-Context Learning | **KNN Prompting** [66]   | IV2           | [`knn_prompting/`](knn_prompting/)                         |
 | Code Data Pruning   | **SCIP** [68]            | IV1, IV2, IV3 | [`code_pruning/`](code_pruning/)                           |
 
+## Implementation Provenance
+
+The released authors' code is used directly for **CAL**, **CRAIG**, **SemDeDup**, **KNN-OOD**, and **KNN Prompting**. For **DEFT-UCS**, **FairDeDup**, and **SCIP**, whose code is not publicly released, we provide faithful reimplementations adhering to the algorithmic specification and computational choices described in the original papers. In all cases, the baseline and its invariant-aligned counterpart share the same underlying libraries and differ only in the execution-level restructurings described in the paper, so observed speedups reflect the effect of invariant alignment.
+
+The repository's uniform appearance is a deliberate consequence of a shared evaluation harness applied across algorithms: a common CLI argument convention, a common timing/profiling instrumentation, and a common JSON/CSV result schema for downstream plotting. Within each algorithm, the baseline path and the invariant-aligned path live in the same script and are selected via runtime flags (e.g. `--use_sklearn_ann`, `--cache_probabilities`) rather than as separate forks; the baseline branches do not modify the upstream algorithmic logic.
+
+| Algorithm     | Upstream Source                                                 | Implementation                                |
+| ------------- | --------------------------------------------------------------- | --------------------------------------------- |
+| CAL           | <https://github.com/mourga/contrastive-active-learning>         | Authors' released code, vendored unchanged    |
+| CRAIG         | <https://github.com/baharanm/craig>                             | Authors' released code, vendored unchanged    |
+| DEFT-UCS      | — (no public release)                                           | Faithful reimplementation per original paper  |
+| SemDeDup      | <https://github.com/facebookresearch/SemDeDup>                  | Authors' released code, vendored unchanged    |
+| FairDeDup     | — (no public release)                                           | Faithful reimplementation per original paper  |
+| KNN-OOD       | <https://github.com/deeplearning-wisc/knn-ood>                  | Authors' released code, vendored unchanged    |
+| KNN Prompting | <https://github.com/BenfengXu/KNNPrompting>                     | Authors' released code, vendored unchanged    |
+| SCIP          | — (no public release)                                           | Faithful reimplementation per original paper  |
+
+Per-algorithm provenance details (which files are vendored vs. added by us) are documented in each subdirectory's README.
+
 ## System Setups
 
 | Setup               | Technology                         | Description                                          |

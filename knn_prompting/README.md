@@ -4,6 +4,12 @@
 **Invariants**: IV2 (Reuse → Intermediate Results Reuse)  
 **Bottleneck Profile**: B2: 75.0±24.0%, Total: 75.0±24.0%
 
+## Code Origin
+
+- **Upstream**: <https://github.com/BenfengXu/KNNPrompting>
+- **Status**: Authors' released code, vendored unchanged in its core algorithmic logic.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV2: pre-compute and reuse log(k_i) across queries), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
+
 ## IV-Aligned Implementation
 
 | Invariant | Original Execution                          | IV-Aligned Execution                                |
