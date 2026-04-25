@@ -34,12 +34,18 @@ pip install -r requirements.txt
 bash get_data.sh
 ```
 
-3. Prepare manual dataset (IMDB) and local HuggingFace cache:
-   - Place the IMDB dataset (e.g., from <https://ai.stanford.edu/~amaas/data/sentiment/>)
-     under `active_learning/data/IMDB/`.
-   - Place a local HuggingFace cache of `bert-base-cased` under
-     `active_learning/cache/bert-base-cased-local/` (e.g., via
-     `transformers-cli download bert-base-cased`).
+3. Download manual dataset (IMDB) and local HuggingFace cache:
+
+   `bash get_data.sh` already includes this step. It will fetch
+   `cal_data_and_model.zip` (~470MB) from an anonymous OSF mirror and
+   extract it into `data/IMDB/` and `cache/bert-base-cased-local/`. To
+   download manually:
+
+   ```bash
+   wget -O cal_data_and_model.zip \
+     "https://osf.io/download/69ec5cb2591194c4cb49dfd3/?view_only=9eb56ca83a904bc1b139485ba0c3c4ed"
+   unzip cal_data_and_model.zip
+   ```
 
 ### Exp 1: End-to-End (Table 3)
 
