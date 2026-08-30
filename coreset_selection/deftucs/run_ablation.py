@@ -3,10 +3,10 @@ Ablation study with timing breakdown (DEFT-UCS).
 
 Tests combinations of optimizations to isolate contributions:
 1. Baseline: Exact KMeans + Recompute cosine + Full Sort
-2. +IV1: ANN KMeans + Recompute cosine + Full Sort
-3. +IV2: Exact KMeans + Cache L2 (Cosine Reuse) + Full Sort
-4. +IV3: Exact KMeans + Recompute cosine + TopK (Argpartition)
-5. Optimized: All three (ANN + Reuse L2 + TopK)
+2. +O1: ANN KMeans + Recompute cosine + Full Sort
+3. +O2: Exact KMeans + Cache L2 (Cosine Reuse) + Full Sort
+4. +O3: Exact KMeans + Recompute cosine + TopK (Argpartition)
+5. Alternative: All three (ANN + Reuse L2 + TopK)
 
 Usage:
     python run_ablation.py
@@ -66,10 +66,10 @@ def main():
     # Define configurations
     configs = {
         "Baseline": {"is_ann": False, "is_reuse_l2": False, "is_topk": False},
-        "+IV1 (ANN)": {"is_ann": True, "is_reuse_l2": False, "is_topk": False},
-        "+IV2 (L2 Reuse)": {"is_ann": False, "is_reuse_l2": True, "is_topk": False},
-        "+IV3 (Top-k)": {"is_ann": False, "is_reuse_l2": False, "is_topk": True},
-        "Optimized (All)": {"is_ann": True, "is_reuse_l2": True, "is_topk": True},
+        "+O1 (ANN)": {"is_ann": True, "is_reuse_l2": False, "is_topk": False},
+        "+O2 (L2 Reuse)": {"is_ann": False, "is_reuse_l2": True, "is_topk": False},
+        "+O3 (Top-k)": {"is_ann": False, "is_reuse_l2": False, "is_topk": True},
+        "+All": {"is_ann": True, "is_reuse_l2": True, "is_topk": True},
     }
     
     results = {}

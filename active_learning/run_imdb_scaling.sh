@@ -1,7 +1,7 @@
 #!/bin/bash
 # CAL IMDB: Dataset Size Scaling Experiment
 # Vary training pool via --cap_training_pool: 22500 (1.0), 15750 (0.7), 11250 (0.5), 6750 (0.3)
-# Baseline (exact KNN, no cache) × 1 run, Optimized (ANN + cache) × 2 runs per ratio
+# Baseline (exact KNN, no cache) × 1 run, Alternative (ANN + cache) × 2 runs per ratio
 # Ratio=1.0: reuse existing results from al_imdb_bert_cal_imdb_full_*
 # Env: cal
 # WARNING: ~1 hour per run. Run last.
@@ -85,7 +85,7 @@ for i in "${!CAPS[@]}"; do
         echo "  [SKIP] ratio=0.7 baseline already completed" | tee -a "${LOG_FILE}"
     fi
     
-    # Optimized × 2
+    # Alternative × 2
     run_experiment ${cap} ${ratio} "True" "True" 1 "optimized"
     run_experiment ${cap} ${ratio} "True" "True" 2 "optimized"
 done

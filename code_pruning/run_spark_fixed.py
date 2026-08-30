@@ -153,13 +153,13 @@ def scip_spark_optimized_approx(
     cfg: Config,
 ) -> Tuple[np.ndarray, TimingResult]:
     """
-    SCIP Optimized - Approximate KMeans + distance reuse + TopK
+    SCIP Alternative - Approximate KMeans + distance reuse + TopK
     """
     timing = TimingResult()
     N, D = embeddings.shape
     K = cfg.n_clusters
     
-    print("Optimized (Approximate KMeans):", flush=True)
+    print("Alternative (Approximate KMeans):", flush=True)
     
     # Step 1: Create DataFrame
     t0 = time.perf_counter()
@@ -245,7 +245,7 @@ def run_comparison(spark: SparkSession, embeddings: np.ndarray, n_runs: int = 1)
         
         keep_o, timing_o = scip_spark_optimized_approx(spark, embeddings, cfg)
         optimized_times.append(timing_o.total_time)
-        print(f"  Optimized total: {timing_o.total_time:.2f}s\n", flush=True)
+        print(f"  Alternative total: {timing_o.total_time:.2f}s\n", flush=True)
         
         if run == 0:
             keep_baseline = keep_b
@@ -260,7 +260,7 @@ def run_comparison(spark: SparkSession, embeddings: np.ndarray, n_runs: int = 1)
     print("Spark Custom KMeans Results:", flush=True)
     print(f"{'='*60}", flush=True)
     print(f"Baseline:  {baseline_avg:.4f}s", flush=True)
-    print(f"Optimized: {optimized_avg:.4f}s", flush=True)
+    print(f"Alternative: {optimized_avg:.4f}s", flush=True)
     print(f"Speedup:   {speedup:.2f}x", flush=True)
     print(f"Overlap:   {overlap*100:.1f}%", flush=True)
     

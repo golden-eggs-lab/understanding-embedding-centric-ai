@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """
-KNN-Prompting Component Breakdown for Table 5.
+KNN-Prompting Component Breakdown for Table 7.
 
-Measures the Intermediate Results Reuse component:
+Measures the Reuse component:
   - Original: log(k) computation + broadcasting KL distance  (anchor.py)
-  - +All (IV-Aligned): pre-computed log(k) lookup + BLAS matmul       (anchor_ann.py opt_v2)
+  - +All (Alternative): pre-computed log(k) lookup + BLAS matmul       (anchor_ann.py opt_v2)
 
 Both share the same LLM inference / anchor building phase;
 only the knn_infer() component is timed differently.
@@ -49,7 +49,7 @@ class AnchorStoreOptV2Instrumented(AnchorStoreOptV2):
         valid_entropy = self.queue_anchor_entropy[:ptr]
         valid_labels = self.queue_label[:ptr]
 
-        # ─── Optimized component: query_log + matmul + entropy ───
+        # ─── Alternative component: query_log + matmul + entropy ───
         start_component = time.time()
         query_log = torch.log(query + 1e-10)
         ip_scores = torch.matmul(valid_anchor, query_log.T).T
@@ -139,7 +139,7 @@ def run_inference(anchor_store, model, tokenizer, dev_data, prompt_prefix,
 
 # ── Main ──────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="KNN-Prompting Table 5 Component Breakdown")
+    parser = argparse.ArgumentParser(description="KNN-Prompting Table 7 Component Breakdown")
     parser.add_argument("--runs", type=int, default=3)
     parser.add_argument("--llm_dir", type=str, default="./llm/gpt2-xl")
     parser.add_argument("--dataset", type=str, default="agnews")
@@ -250,7 +250,7 @@ def main():
         baseline_stats = baseline_store.get_bottleneck_stats()
         baseline_acc = sum(1 for a, b in zip(dev_cached_labels, dev_pred_baseline) if a == b) / len(dev_cached_labels)
 
-        # The actual component time = Total Infer Time - TopK Time (to isolate "Intermediate Results Computation")
+        # The actual component time = Total Infer Time - TopK Time (to isolate "Shared-State Recomputation")
         actual_baseline_component_time = baseline_total_infer_time - baseline_stats['other_time']
 
         print(f"  [Original] Acc: {baseline_acc:.4f}")
@@ -265,7 +265,7 @@ def main():
             'total_infer_time': baseline_total_infer_time,
         })
 
-        # ─── +All (IV-Aligned) (anchor_ann.py opt_v2): pre-computed log + matmul ───
+        # ─── +All (Alternative) (anchor_ann.py opt_v2): pre-computed log + matmul ───
         print(f"\n  [+All] Creating anchor store and running inference...")
         opt_store = AnchorStoreOptV2Instrumented(
             K=n_anchor_shot, dim=vocab_size, knn=args.knn, n_class=n_class
@@ -321,13 +321,13 @@ def main():
     print(f"  TopK time:       {np.mean(bl_topk):.4f} ± {np.std(bl_topk):.4f}s")
     print(f"  Total knn_infer: {np.mean(bl_total):.4f} ± {np.std(bl_total):.4f}s")
 
-    print(f"\n+All (IV-Aligned) (pre-computed log + BLAS matmul):")
+    print(f"\n+All (Alternative) (pre-computed log + BLAS matmul):")
     print(f"  Accuracy:        {np.mean(op_acc)*100:.2f} ± {np.std(op_acc)*100:.2f}%")
     print(f"  Component time:  {np.mean(op_comp):.4f} ± {np.std(op_comp):.4f}s")
     print(f"  TopK time:       {np.mean(op_topk):.4f} ± {np.std(op_topk):.4f}s")
     print(f"  Total knn_infer: {np.mean(op_total):.4f} ± {np.std(op_total):.4f}s")
 
-    print(f"\n--- Table 5 Row (Intermediate Results Reuse) ---")
+    print(f"\n--- Table 7 Row (Reuse) ---")
     print(f"  Original Time:        {np.mean(bl_comp):.2f} ± {np.std(bl_comp):.2f}s")
     print(f"  +Reuse Time:          {np.mean(op_comp):.4f} ± {np.std(op_comp):.4f}s")
     print(f"  Computation Reduced:  {np.mean(reductions):.2f} ± {np.std(reductions):.2f}%")

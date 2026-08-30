@@ -200,12 +200,12 @@ def main():
         ratio_results['baseline_acc'] = baseline_acc
         ratio_results['baseline_kept'] = len(baseline_kept_global)
 
-        # Optimized dedup kept indices at eps=0.05 (use run1)
+        # Alternative dedup kept indices at eps=0.05 (use run1)
         opt_dir = os.path.join(args.dedup_dir, f'ratio_{ratio}_opt_run1')
         opt_kept = extract_kept_indices(opt_dir, args.num_clusters, args.eps)
         opt_kept_global = [subset_indices[i] for i in opt_kept if i < len(subset_indices)]
 
-        print(f"  Optimized kept: {len(opt_kept_global)} / {len(subset_indices)} ({100*len(opt_kept_global)/len(subset_indices):.1f}%)")
+        print(f"  Alternative kept: {len(opt_kept_global)} / {len(subset_indices)} ({100*len(opt_kept_global)/len(subset_indices):.1f}%)")
 
         opt_trainset = Subset(full_trainset, opt_kept_global)
         opt_acc = train_and_evaluate(opt_trainset, testloader, f"optimized_r{ratio}", args.seed)

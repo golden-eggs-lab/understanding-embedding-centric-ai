@@ -1,6 +1,6 @@
 """
 benchmark_selection.py
-Selects Coreset samples using Exact (Baseline) or FAISS / NearPy + Reuse (Optimized).
+Selects Coreset samples using Exact (Baseline) or FAISS / NearPy + Reuse (Alternative).
 Outputs selected samples as a JSON file for decoupled fine-tuning.
 """
 import os
@@ -56,7 +56,7 @@ def selection_wikilarge(args):
         # Baseline: Exact KMeans + Full Sort + Cosine Recompute
         selected_indices, timing = baseline_selection(embeddings, K, A, seed=args.seed, verbose=False)
     else:
-        # Optimized: FAISS IVF (ANN) + TopK + L2 Reuse
+        # Alternative: FAISS IVF (ANN) + TopK + L2 Reuse
         selected_indices, timing = optimized_selection(embeddings, K, A, seed=args.seed, verbose=False)
 
     selected_indices = np.unique(np.array(selected_indices))

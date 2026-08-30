@@ -329,7 +329,7 @@ def scip_topk_only(embeddings: np.ndarray, cfg: Config) -> Tuple[np.ndarray, Tim
 
 
 def scip_optimized(embeddings: np.ndarray, cfg: Config) -> Tuple[np.ndarray, TimingResult, np.ndarray, int]:
-    """Fully Optimized: Faiss IVF + Reuse + TopK"""
+    """Fully Alternative: Faiss IVF + Reuse + TopK"""
     timing = TimingResult()
     N, D = embeddings.shape
     K = cfg.n_clusters

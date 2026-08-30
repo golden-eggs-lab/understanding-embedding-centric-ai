@@ -1,21 +1,21 @@
 # CAL — Contrastive Active Learning
 
 **Task**: Active Learning (Table 1)  
-**Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Probability Reuse)  
+**Opportunities**: O1 (Approximation → ANN), O2 (Reuse → Probability Reuse)  
 **Bottleneck Profile**: B1: 77.0±10.0%, B2: 10.5±6.5%, Total: 87.5±3.5%
 
 ## Code Origin
 
 - **Upstream**: <https://github.com/mourga/contrastive-active-learning>
 - **Status**: Authors' released code, vendored unchanged in its core algorithmic logic. Auxiliary baselines under `acquisition/` (BatchBALD, ALPS) are vendored from their respective upstream repositories, with the URL annotated in each file's header comment.
-- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV1: ANN backend via sklearn BallTree; IV2: probability cache across queries), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags (`--use_sklearn_ann`, `--cache_probabilities`) and is not modified.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the Alternative execution path (O1: ANN backend via sklearn BallTree; O2: probability cache across queries), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags (`--use_sklearn_ann`, `--cache_probabilities`) and is not modified.
 
-## IV-Aligned Implementation
+## Alternative Implementation
 
-| Invariant | Original Execution                                                 | IV-Aligned Execution                         |
+| Opportunity | Original Execution                                                 | Alternative Execution                         |
 | --------- | ------------------------------------------------------------------ | -------------------------------------------- |
-| IV1       | Exact KNN (brute-force)                                            | ANN (sklearn BallTree, leaf_size=40)         |
-| IV2       | Recompute softmax probabilities for labeled samples at every query | Cache and reuse probabilities across queries |
+| O1       | Exact KNN (brute-force)                                            | ANN (sklearn BallTree, leaf_size=40)         |
+| O2       | Recompute softmax probabilities for labeled samples at every query | Cache and reuse probabilities across queries |
 
 ## Datasets
 
@@ -53,7 +53,7 @@ bash get_data.sh
    unzip cal_data_and_model.zip
    ```
 
-### Exp 1: End-to-End (Table 3)
+### Exp 1: End-to-End (Table 4)
 
 ```bash
 # Both SST-2 and IMDB, 3 runs each
@@ -81,24 +81,24 @@ python run_al.py --dataset_name sst-2 --acquisition cal \
     --use_sklearn_ann False --cache_probabilities False \
     --seed 42 --init_train_data 1% --acquisition_size 2% --budget 15%
 
-# IV-Aligned (IV1 + IV2)
+# Alternative (O1 + O2)
 python run_al.py --dataset_name sst-2 --acquisition cal \
     --use_sklearn_ann True --cache_probabilities True \
     --seed 42 --init_train_data 1% --acquisition_size 2% --budget 15%
 ```
 
-### Exp 2: Ablation (Table 4)
+### Exp 2: Ablation (Table 6)
 
 ```bash
 bash run_ablation.sh
-# Tests: Original / +IV1 / +IV2 / +All
+# Tests: Original / +O1 / +O2 / +All
 ```
 
-### Exp 3: Component Breakdown (Table 5)
+### Exp 3: Component Breakdown (Table 7)
 
 Component-level execution times (e.g., Training time, Test time, Inference time, Selection time, KNN Build, and KNN Search) are intrinsically logged and printed in the terminal at the end of each iteration during the standard `run_al.py` execution. No separate breakdown script is required.
 
-### Exp 4: Overhead (Table 6)
+### Exp 4: Overhead (Table 8)
 
 Similar to Exp 3, the exact separation of Overhead (Index Build vs. Search Query Time) is natively reported in the `run_al.py` summary logs.
 
@@ -109,7 +109,7 @@ python measure_cache_memory.py
 # Reports: peak cache size for probability reuse
 ```
 
-### Exp 5: Cross-Setup (Table 7)
+### Exp 5: Cross-Setup (Table 9)
 
 ```bash
 bash run_milvus_comparison.sh       # Milvus vector-database
@@ -149,8 +149,8 @@ python show_acc.py --ablation
 | File                           | Description                                               |
 | ------------------------------ | --------------------------------------------------------- |
 | `run_al.py`                    | Main active learning experiment (all configs)             |
-| `acquisition/cal.py`           | CAL with IV1 (ANN) + IV2 (probability reuse)              |
-| `run_e2e_comparison.sh`        | Unified E2E: SST-2 + IMDB, original vs IV-aligned (Exp 1) |
+| `acquisition/cal.py`           | CAL with O1 (ANN) + O2 (probability reuse)              |
+| `run_e2e_comparison.sh`        | Unified E2E: SST-2 + IMDB, original vs alternative (Exp 1) |
 | `run_ablation.sh`              | Ablation study (Exp 2)                                    |
 | `measure_cache_memory.py`      | Overhead measurement (Exp 4)                              |
 | `run_spark_comparison.sh`      | Spark distributed (Exp 5)                                 |

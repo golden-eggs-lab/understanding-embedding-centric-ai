@@ -6,7 +6,7 @@ to ensure measurements match the baseline (86.8s for ratio=1.0).
 
 Vary training data ratio: 0.7, 0.5, 0.3
 Measure: e2e dedup time (clustering + dedup), recall (overlap of kept indices)
-Baseline (Exact, NoCache) × 1 run, Optimized (ANN, Cache) × 2 runs per ratio
+Baseline (Exact, NoCache) × 1 run, Alternative (ANN, Cache) × 2 runs per ratio
 """
 
 import os
@@ -209,11 +209,11 @@ def main():
         ratio_results['baseline_dedup'] = dedup_b
         ratio_results['baseline_kept'] = len(kept_b)
         
-        # --- Optimized (ANN, Cache) × 2 ---
+        # --- Alternative (ANN, Cache) × 2 ---
         opt_times = []
         opt_kept_list = []
         for run in range(2):
-            print(f"\n[Optimized run{run+1}: ANN, Cache]")
+            print(f"\n[Alternative run{run+1}: ANN, Cache]")
             save_folder_o = os.path.join(args.output_dir, f'ratio_{ratio}_opt_run{run+1}')
             if os.path.exists(save_folder_o):
                 shutil.rmtree(save_folder_o)
@@ -250,7 +250,7 @@ def main():
         speedup = d['baseline_time'] / opt_mean if opt_mean > 0 else 0
         print(f"\nRatio={r_str} (n={d['n_samples']}):")
         print(f"  Baseline:  {d['baseline_time']:.2f}s  (kept={d['baseline_kept']})")
-        print(f"  Optimized: {opt_mean:.2f}s  (speedup: {speedup:.2f}x)")
+        print(f"  Alternative: {opt_mean:.2f}s  (speedup: {speedup:.2f}x)")
         print(f"  Recall: {d['recall']*100:.1f}%")
     
     print(f"\nResults saved to {args.output_dir}/scaling_results.json")

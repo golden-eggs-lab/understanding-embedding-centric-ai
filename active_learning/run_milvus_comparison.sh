@@ -38,7 +38,7 @@ echo "GPU: $GPU"
 echo "Config: 1% init, 2% acquisition, 15% budget"
 echo ""
 echo "Baseline: Milvus FLAT (exact) + no prob cache"
-echo "Optimized: Milvus IVF_FLAT (approx) + prob cache"
+echo "Alternative: Milvus IVF_FLAT (approx) + prob cache"
 echo "=========================================="
 
 LOGFILE="milvus_comparison.log"

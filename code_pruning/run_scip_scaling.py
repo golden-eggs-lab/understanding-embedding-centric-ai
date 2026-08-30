@@ -4,7 +4,7 @@ SCIP: Dataset Size Scaling Experiment (AWS, CPU-only)
 Uses FAISS KMeans (same as run_scip_only.py) to align with e2e measurements.
 Vary embeddings ratio: 1.0, 0.7, 0.5, 0.3
 Measure: SCIP time (baseline vs optimized), recall
-Baseline × 1 run, Optimized × 2 runs per ratio
+Baseline × 1 run, Alternative × 2 runs per ratio
 
 Run on AWS: python run_scip_scaling.py --embeddings /path/to/embeddings.npy
 """
@@ -210,11 +210,11 @@ def main():
         for s, t in tb.step_times.items():
             print(f"    {s}: {t:.4f}s")
 
-        # Optimized × 2
+        # Alternative × 2
         opt_times = []
         keep_o_list = []
         for run in range(2):
-            print(f"\n[Optimized run{run+1}]")
+            print(f"\n[Alternative run{run+1}]")
             keep_o, to = scip_optimized(sub_embs, args.n_clusters, args.p, args.alpha)
             opt_times.append(to.total_time)
             keep_o_list.append(set(keep_o))

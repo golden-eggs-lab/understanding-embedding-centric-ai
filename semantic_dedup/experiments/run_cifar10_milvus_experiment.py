@@ -872,7 +872,7 @@ def run_milvus_experiment(skip_downstream=False, only_downstream=False):
     
     configurations_semdedup = [
         ("SemDeDup_Milvus_Exact_NoCache", False, False),  # Baseline
-        ("SemDeDup_Milvus_ANN_Cache", True, True),        # Optimized
+        ("SemDeDup_Milvus_ANN_Cache", True, True),        # Alternative
     ]
     
     for name, use_ann, use_cache in configurations_semdedup:
@@ -910,7 +910,7 @@ def run_milvus_experiment(skip_downstream=False, only_downstream=False):
     
     configurations_fairdedup = [
         ("FairDeDup_Milvus_Exact_NoCache", False, False),  # Baseline
-        ("FairDeDup_Milvus_ANN_Cache", True, True),        # Optimized
+        ("FairDeDup_Milvus_ANN_Cache", True, True),        # Alternative
     ]
     
     for name, use_ann, use_cache in configurations_fairdedup:

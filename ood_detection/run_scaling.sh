@@ -1,7 +1,7 @@
 #!/bin/bash
 # KNN-OOD ImageNet-1K: Dataset Size Scaling Experiment
 # Vary training data subsample ratio: 0.7, 0.5, 0.3
-# Baseline (Original Exact KNN GPU) × 1 run, Optimized (+All/IV-Aligned ANN-IVF GPU) × 2 runs per ratio
+# Baseline (Original Exact KNN GPU) × 1 run, Alternative (+All/Alternative ANN-IVF GPU) × 2 runs per ratio
 # Ratio=1.0 available from existing knn_ood_benchmark_3runs.log
 # Env: ood
 
@@ -44,7 +44,7 @@ for ratio in ${RATIOS}; do
         > "${LOG_DIR}/baseline_ratio${ratio}.log" 2>&1
     echo "  [Original] Done."
 
-    # +All (IV-Aligned): ANN-IVF GPU × 2
+    # +All (Alternative): ANN-IVF GPU × 2
     for run in 1 2; do
         echo "  [+All run${run}] Running..."
         python -u run_imagenet.py \
@@ -83,7 +83,7 @@ for ratio in [0.7, 0.5, 0.3]:
         m = re.search(r'AUROC.*?:\s*([\d.]+)', text)
         if m: d['baseline_auroc'] = float(m.group(1))
     
-    # +All (IV-Aligned)
+    # +All (Alternative)
     opt_times, opt_aurocs = [], []
     for run in [1, 2]:
         f = log_dir / f"optimized_ratio{ratio}_run{run}.log"

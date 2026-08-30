@@ -2,7 +2,7 @@
 # Complete ablation experiments (no MRR)
 # Runs 5 experiments total:
 #   1. Baseline
-#   2. Fully Optimized (IVF + Reuse + TopK)
+#   2. Fully Alternative (IVF + Reuse + TopK)
 #   3-5. Three ablations: +ANN, +Reuse, +TopK
 
 set -e
@@ -21,7 +21,7 @@ echo "Settings: K=${N_CLUSTERS}, runs=${N_RUNS}"
 echo ""
 echo "Experiments:"
 echo "  1. Baseline (Flat + No Reuse + Full Sort)"
-echo "  2. Fully Optimized (IVF + Reuse + TopK)"
+echo "  2. Fully Alternative (IVF + Reuse + TopK)"
 echo "  3. +ANN only (IVF + No Reuse + Full Sort)"
 echo "  4. +Reuse only (Flat + Reuse + Full Sort)"
 echo "  5. +TopK only (Flat + No Reuse + TopK)"
@@ -40,7 +40,7 @@ echo "  ANN: OFF | Reuse: OFF | TopK: OFF"
 echo "=========================================="
 $PYTHON $SCRIPT --mode baseline --n_clusters $N_CLUSTERS --n_runs $N_RUNS --output_dir $OUTPUT_DIR
 
-# Experiment 2: Fully Optimized
+# Experiment 2: Fully Alternative
 echo ""
 echo "=========================================="
 echo "Experiment 2/5: FULLY OPTIMIZED"

@@ -1,22 +1,22 @@
 # SCIP — Code Data Pruning
 
 **Task**: Code Data Pruning (Table 1)  
-**Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Distance Reuse), IV3 (Partial Order → Top-k)  
+**Opportunities**: O1 (Approximation → ANN), O2 (Reuse → Distance Reuse), O3 (Partial Order → Top-k)  
 **Bottleneck Profile**: B1: 40.0±18.0%, B2: 1.0±0.0%, B3: 1.0±0.0%, Total: 42.0±18.0%
 
 ## Code Origin
 
 - **Upstream**: not publicly released.
 - **Status**: Faithful reimplementation following the algorithmic specification and computational choices in the original paper.
-- **Notes**: The baseline and its IV-aligned variants share the same underlying libraries (FAISS, NumPy, HuggingFace `datasets`) and differ only in the execution-level restructurings described in the paper, selected via runtime flags within the same script.
+- **Notes**: The baseline and its Alternative variants share the same underlying libraries (FAISS, NumPy, HuggingFace `datasets`) and differ only in the execution-level restructurings described in the paper, selected via runtime flags within the same script.
 
-## IV-Aligned Implementation
+## Alternative Implementation
 
-| Invariant | Original Execution                                   | IV-Aligned Execution                      |
+| Opportunity | Original Execution                                   | Alternative Execution                      |
 | --------- | ---------------------------------------------------- | ----------------------------------------- |
-| IV1       | Exact centroid search (FAISS Flat)                   | ANN (FAISS IVF, nlist=√K, nprobe=nlist/2) |
-| IV2       | Recompute sample–centroid distances in ranking stage | Reuse distances from assignment stage     |
-| IV3       | Full argsort over all samples                        | Top-k selection via `argpartition`        |
+| O1       | Exact centroid search (FAISS Flat)                   | ANN (FAISS IVF, nlist=√K, nprobe=nlist/2) |
+| O2       | Recompute sample–centroid distances in ranking stage | Reuse distances from assignment stage     |
+| O3       | Full argsort over all samples                        | Top-k selection via `argpartition`        |
 
 ## Datasets
 
@@ -44,7 +44,7 @@ The Python benchmark scripts (like `run_inmemory_ablation_v2.py`) assume you hav
 
 _(Note: The Java End-to-End script, `run_java_experiment.py`, automatically handles downloading the dataset and generating the embeddings on the fly if they are missing)._
 
-### Exp 1: End-to-End (Table 3)
+### Exp 1: End-to-End (Table 4)
 
 The default scripts run on the **CodeSearchNet-Python** dataset using pre-computed embeddings:
 
@@ -60,25 +60,25 @@ python run_java_experiment.py --max_samples 0 --n_gpus 8
 # Paper: Java 63.54s → 29.83s (-53.05%)
 ```
 
-### Exp 2: Ablation (Table 4)
+### Exp 2: Ablation (Table 6)
 
 ```bash
 bash run_e2e_ablation.sh
 # Tests: baseline, ann, reuse, and topk optimizations
 ```
 
-### Exp 3: Component-Level Breakdown (Table 5)
+### Exp 3: Component-Level Breakdown (Table 7)
 
 Component-level breakdown timings (e.g., KMeans, CentroidSearch, Distances, Top-K) are natively reported in the console output during the execution of the ablation script (`run_e2e_ablation.sh`).
 
-### Exp 4: Overhead (Table 6)
+### Exp 4: Overhead (Table 8)
 
 ```bash
 python measure_build_query_cache.py
 # Reports: build time, query time, peak cache size
 ```
 
-### Exp 5: Cross-Setup (Table 7)
+### Exp 5: Cross-Setup (Table 9)
 
 ```bash
 python run_milvus_simple.py --n_clusters 1000      # Milvus

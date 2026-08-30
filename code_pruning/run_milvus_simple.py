@@ -52,7 +52,7 @@ def run_milvus_scip(embeddings: np.ndarray, cfg: Config, db_path: str, version: 
         # Baseline: FLAT index (exact search)
         client.create_collection('centroids', dimension=D, metric_type='IP')
     else:
-        # Optimized: IVF index (ANN search)
+        # Alternative: IVF index (ANN search)
         # For small centroid set (100), use IVF with appropriate parameters
         client.create_collection(
             collection_name='centroids',
@@ -209,7 +209,7 @@ def main():
         if os.path.exists(db_o): os.remove(db_o)
         keep_o, timing_o = run_milvus_scip(embeddings, cfg, db_o, "optimized")
         optimized_times.append(timing_o.total_time)
-        print(f"  Optimized: {timing_o.total_time:.2f}s")
+        print(f"  Alternative: {timing_o.total_time:.2f}s")
         
         if run == 0:
             keep_baseline, keep_optimized = keep_b, keep_o
@@ -223,7 +223,7 @@ def main():
     print("Milvus Results:")
     print(f"{'='*60}")
     print(f"Baseline:  {baseline_avg:.4f}s")
-    print(f"Optimized: {optimized_avg:.4f}s")
+    print(f"Alternative: {optimized_avg:.4f}s")
     print(f"Speedup:   {speedup:.2f}x")
     print(f"Overlap:   {overlap*100:.1f}%")
     

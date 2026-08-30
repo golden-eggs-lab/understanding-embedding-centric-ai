@@ -71,7 +71,7 @@ def get_backend_config(backend, mode):
     """Get configuration for each backend/mode combination
     
     Baseline: use_ann=False, use_reuse=False (no optimizations)
-    Optimized: use_ann=True, use_reuse=True (both optimizations)
+    Alternative: use_ann=True, use_reuse=True (both optimizations)
     """
     if backend == 'memory':
         return {
@@ -320,7 +320,7 @@ for backend in args.backends:
               f"(acc: {s['final_acc']['mean']:.4f})")
     if 'optimized' in summary[backend]:
         s = summary[backend]['optimized']
-        print(f"   Optimized : {s['avg_greedy_time']['mean']:.3f} ± {s['avg_greedy_time']['std']:.3f}s "
+        print(f"   Alternative : {s['avg_greedy_time']['mean']:.3f} ± {s['avg_greedy_time']['std']:.3f}s "
               f"(acc: {s['final_acc']['mean']:.4f})")
     if 'speedup' in summary[backend]:
         print(f"   Speedup   : {summary[backend]['speedup']['greedy_speedup']:.2f}x")

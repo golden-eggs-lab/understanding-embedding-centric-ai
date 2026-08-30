@@ -1,45 +1,45 @@
-# AI Becomes DB
+# understanding-embedding-centric-ai
 
-**When AI Pipelines Become Database Workloads: An Experimental Study of Similarity, Reuse, and Ranking**
+**Understanding Embedding-Centric AI Pipelines: An Experimental Study of Similarity, Reuse, and Ranking**
 
-This repository contains the source code and experiment scripts for reproducing all results in the paper. We study eight embedding-centric ML algorithms across six DCAI tasks and show that their execution bottlenecks correspond to violations of three **database execution invariants**. Aligning execution with these invariants consistently reduces runtime while preserving task performance.
+This repository contains the source code and experiment scripts for reproducing all results in the paper. We study eight embedding-centric AI algorithms across six DCAI tasks and show that their runtime concentrates in three recurring execution behaviors. Substituting standard alternatives for those behaviors consistently reduces runtime while preserving task performance.
 
-## Execution Invariants
+## Execution Opportunities
 
-| Invariant              | Bottleneck Addressed            | Implementation                                         |
-| ---------------------- | ------------------------------- | ------------------------------------------------------ |
-| **IV1: Approximation** | B1: Exact similarity evaluation | ANN indexing (FAISS IVF, NearPy LSH, sklearn BallTree) |
-| **IV2: Reuse**         | B2: Overlapping computation     | Intermediate result materialization & reuse            |
-| **IV3: Partial Order** | B3: Total ordering              | Top-k selection via `argpartition`                     |
+| Opportunity              | Bottleneck Addressed            | Implementation                                         |
+| ------------------------ | ------------------------------- | ------------------------------------------------------ |
+| **O1: Approximation**    | B1: Exact similarity evaluation | ANN indexing (FAISS IVF, NearPy LSH, sklearn BallTree) |
+| **O2: Reuse**            | B2: Shared-state recomputation  | Shared state materialization & reuse                   |
+| **O3: Partial ordering** | B3: Total ordering              | Top-k selection via `argpartition`                     |
 
 ## Algorithms
 
-| Task                | Algorithm                | Invariants    | Directory                                                  |
+| Task                | Algorithm                | Opportunities | Directory                                                  |
 | ------------------- | ------------------------ | ------------- | ---------------------------------------------------------- |
-| Coreset Selection   | **CRAIG** [43]           | IV1, IV2      | [`coreset_selection/craig/`](coreset_selection/craig/)     |
-| Coreset Selection   | **DEFT-UCS** [13]        | IV1, IV2, IV3 | [`coreset_selection/deftucs/`](coreset_selection/deftucs/) |
-| Active Learning     | **CAL** [40]             | IV1, IV2      | [`active_learning/`](active_learning/)                     |
-| Semantic Dedup      | **SemDeDup & FairDeDup** | IV1, IV2      | [`semantic_dedup/`](semantic_dedup/)                       |
-| OOD Detection       | **KNN-OOD** [58]         | IV1           | [`ood_detection/`](ood_detection/)                         |
-| In-Context Learning | **KNN Prompting** [66]   | IV2           | [`knn_prompting/`](knn_prompting/)                         |
-| Code Data Pruning   | **SCIP** [68]            | IV1, IV2, IV3 | [`code_pruning/`](code_pruning/)                           |
+| Coreset Selection   | **CRAIG** [43]           | O1, O2        | [`coreset_selection/craig/`](coreset_selection/craig/)     |
+| Coreset Selection   | **DEFT-UCS** [13]        | O1, O2, O3    | [`coreset_selection/deftucs/`](coreset_selection/deftucs/) |
+| Active Learning     | **CAL** [40]             | O1, O2        | [`active_learning/`](active_learning/)                     |
+| Semantic Dedup      | **SemDeDup & FairDeDup** | O1, O2        | [`semantic_dedup/`](semantic_dedup/)                       |
+| OOD Detection       | **KNN-OOD** [58]         | O1            | [`ood_detection/`](ood_detection/)                         |
+| In-Context Learning | **KNN Prompting** [66]   | O2            | [`knn_prompting/`](knn_prompting/)                         |
+| Code Data Pruning   | **SCIP** [68]            | O1, O2, O3    | [`code_pruning/`](code_pruning/)                           |
 
 ## Implementation Provenance
 
-The released authors' code is used directly for **CAL**, **CRAIG**, **SemDeDup**, **KNN-OOD**, and **KNN Prompting**. For **DEFT-UCS**, **FairDeDup**, and **SCIP**, whose code is not publicly released, we provide faithful reimplementations adhering to the algorithmic specification and computational choices described in the original papers. In all cases, the baseline and its invariant-aligned counterpart share the same underlying libraries and differ only in the execution-level restructurings described in the paper, so observed speedups reflect the effect of invariant alignment.
+The released authors' code is used directly for **CAL**, **CRAIG**, **SemDeDup**, **KNN-OOD**, and **KNN Prompting**. For **DEFT-UCS**, **FairDeDup**, and **SCIP**, whose code is not publicly released, we provide faithful reimplementations adhering to the algorithmic specification and computational choices described in the original papers. In all cases, the baseline and its opportunity-aligned counterpart share the same underlying libraries and differ only in the execution-level restructurings described in the paper, so observed speedups reflect the effect of opportunity alignment.
 
-The repository's uniform appearance is a deliberate consequence of a shared evaluation harness applied across algorithms: a common CLI argument convention, a common timing/profiling instrumentation, and a common JSON/CSV result schema for downstream plotting. Within each algorithm, the baseline path and the invariant-aligned path live in the same script and are selected via runtime flags (e.g. `--use_sklearn_ann`, `--cache_probabilities`) rather than as separate forks; the baseline branches do not modify the upstream algorithmic logic.
+The repository's uniform appearance is a deliberate consequence of a shared evaluation harness applied across algorithms: a common CLI argument convention, a common timing/profiling instrumentation, and a common JSON/CSV result schema for downstream plotting. Within each algorithm, the baseline path and the opportunity-aligned path live in the same script and are selected via runtime flags (e.g. `--use_sklearn_ann`, `--cache_probabilities`) rather than as separate forks; the baseline branches do not modify the upstream algorithmic logic.
 
-| Algorithm     | Upstream Source                                                 | Implementation                                |
-| ------------- | --------------------------------------------------------------- | --------------------------------------------- |
-| CAL           | <https://github.com/mourga/contrastive-active-learning>         | Authors' released code, vendored unchanged    |
-| CRAIG         | <https://github.com/baharanm/craig>                             | Authors' released code, vendored unchanged    |
-| DEFT-UCS      | — (no public release)                                           | Faithful reimplementation per original paper  |
-| SemDeDup      | <https://github.com/facebookresearch/SemDeDup>                  | Authors' released code, vendored unchanged    |
-| FairDeDup     | — (no public release)                                           | Faithful reimplementation per original paper  |
-| KNN-OOD       | <https://github.com/deeplearning-wisc/knn-ood>                  | Authors' released code, vendored unchanged    |
-| KNN Prompting | <https://github.com/BenfengXu/KNNPrompting>                     | Authors' released code, vendored unchanged    |
-| SCIP          | — (no public release)                                           | Faithful reimplementation per original paper  |
+| Algorithm     | Upstream Source                                         | Implementation                               |
+| ------------- | ------------------------------------------------------- | -------------------------------------------- |
+| CAL           | <https://github.com/mourga/contrastive-active-learning> | Authors' released code, vendored unchanged   |
+| CRAIG         | <https://github.com/baharanm/craig>                     | Authors' released code, vendored unchanged   |
+| DEFT-UCS      | — (no public release)                                   | Faithful reimplementation per original paper |
+| SemDeDup      | <https://github.com/facebookresearch/SemDeDup>          | Authors' released code, vendored unchanged   |
+| FairDeDup     | — (no public release)                                   | Faithful reimplementation per original paper |
+| KNN-OOD       | <https://github.com/deeplearning-wisc/knn-ood>          | Authors' released code, vendored unchanged   |
+| KNN Prompting | <https://github.com/BenfengXu/KNNPrompting>             | Authors' released code, vendored unchanged   |
+| SCIP          | — (no public release)                                   | Faithful reimplementation per original paper |
 
 Per-algorithm provenance details (which files are vendored vs. added by us) are documented in each subdirectory's README.
 
@@ -55,9 +55,9 @@ Per-algorithm provenance details (which files are vendored vs. added by us) are 
 
 The paper presents 9 experiments. The table below shows which algorithms are covered in each experiment and where the corresponding scripts are located.
 
-### Exp 1: End-to-End Evaluation (Table 3)
+### Exp 1: End-to-End Evaluation (Table 4)
 
-Compares original vs IV-aligned runtime and task performance.
+Compares original vs alternative runtime and task performance.
 
 | Algorithm            | Script                                                                 |
 | -------------------- | ---------------------------------------------------------------------- |
@@ -69,9 +69,9 @@ Compares original vs IV-aligned runtime and task performance.
 | KNN Prompting        | `knn_prompting/run_comparison.sh`                                      |
 | SCIP                 | `code_pruning/run_e2e_ablation.sh`                                     |
 
-### Exp 2: Ablation of IV1/IV2/IV3 (Table 4)
+### Exp 2: Ablation of O1/O2/O3 (Table 6)
 
-Individual and combined effects of each invariant.
+Individual and combined effects of each opportunity.
 
 | Algorithm            | Script                                      |
 | -------------------- | ------------------------------------------- |
@@ -80,11 +80,11 @@ Individual and combined effects of each invariant.
 | SemDeDup & FairDeDup | `semantic_dedup/scripts/run_ablation.sh`    |
 | SCIP                 | `code_pruning/run_e2e_ablation.sh`          |
 
-### Exp 3: Component-Level Breakdown (Table 5)
+### Exp 3: Component-Level Breakdown (Table 7)
 
 Breakdown timing fields are included in E2E / ablation script outputs.
 
-### Exp 4: Execution Overhead (Table 6)
+### Exp 4: Execution Overhead (Table 8)
 
 Build vs query time and peak cache size.
 
@@ -96,7 +96,7 @@ Build vs query time and peak cache size.
 | KNN-OOD              | Build/query time logged in `ood_detection/run_imagenet.py`                       |
 | SCIP                 | `code_pruning/measure_build_query_cache.py`                                      |
 
-### Exp 5: Cross-Setup Evaluation (Table 7)
+### Exp 5: Cross-Setup Evaluation (Table 9)
 
 In-memory, vector-database, and distributed setups.
 
@@ -135,7 +135,7 @@ Selection recall, task performance, and runtime ratio under varying dataset size
 
 ### Exp 8: Cache Capacity Sensitivity (Figure 4 bottom-right)
 
-Runtime ratio under varying LRU cache sizes for 5 algorithms with IV2 (reuse).
+Runtime ratio under varying LRU cache sizes for 5 algorithms with O2 (reuse).
 
 | Script                                         | Description                                     |
 | ---------------------------------------------- | ----------------------------------------------- |
@@ -169,16 +169,16 @@ Cross-algorithm plotting scripts are in [`draw/`](draw/):
 ## Repository Structure
 
 ```
-ai-becomes-db/
+understanding-embedding-centric-ai/
 ├── README.md
 ├── coreset_selection/
-│   ├── craig/         # CRAIG: IV1 (ANN) + IV2 (Residual Reuse)
-│   └── deftucs/       # DEFT-UCS: IV1 + IV2 (Distance Reuse) + IV3 (Top-k)
-├── active_learning/   # CAL: IV1 (ANN) + IV2 (Probability Reuse)
-├── semantic_dedup/    # SemDeDup & FairDeDup: IV1 (ANN) + IV2 (Search Results Reuse)
-├── ood_detection/     # KNN-OOD: IV1 (ANN with GPU)
-├── knn_prompting/     # KNN Prompting: IV2 (Intermediate Results Reuse)
-├── code_pruning/      # SCIP: IV1 + IV2 (Distance Reuse) + IV3 (Top-k)
+│   ├── craig/         # CRAIG: O1 (ANN) + O2 (Residual Reuse)
+│   └── deftucs/       # DEFT-UCS: O1 + O2 (Distance Reuse) + O3 (Top-k)
+├── active_learning/   # CAL: O1 (ANN) + O2 (Probability Reuse)
+├── semantic_dedup/    # SemDeDup & FairDeDup: O1 (ANN) + O2 (Search Results Reuse)
+├── ood_detection/     # KNN-OOD: O1 (ANN with GPU)
+├── knn_prompting/     # KNN Prompting: O2 (Reuse)
+├── code_pruning/      # SCIP: O1 + O2 (Distance Reuse) + O3 (Top-k)
 └── draw/              # Cross-algorithm plotting scripts
 ```
 

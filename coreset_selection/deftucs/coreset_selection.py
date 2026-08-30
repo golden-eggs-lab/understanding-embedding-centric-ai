@@ -3,7 +3,7 @@ Core coreset selection algorithms.
 
 Implements both baseline and optimized selection methods:
 - Baseline: Exact KMeans (NumPy broadcast) + Recompute cosine distances
-- Optimized: ANN KMeans (FAISS IVF) + Cache L2 distances (avoid redundant computation)
+- Alternative: ANN KMeans (FAISS IVF) + Cache L2 distances (avoid redundant computation)
 
 Based on experiments/run_comparison.py
 """
@@ -133,7 +133,7 @@ def optimized_selection(vectors: np.ndarray, K: int, A: int, seed: int = 42,
                         nlist: int = 256, nprobe: int = 128, verbose: bool = True,
                         is_ann: bool = True, is_topk: bool = True, is_reuse_l2: bool = True):
     """
-    Optimized coreset selection: Configurable optimization switches for IV1, IV2, IV3.
+    Alternative coreset selection: Configurable optimization switches for O1, O2, O3.
     
     Key optimizations:
     1. is_ann: Use FAISS IVF index for approximate nearest neighbor in KMeans
@@ -148,9 +148,9 @@ def optimized_selection(vectors: np.ndarray, K: int, A: int, seed: int = 42,
         nlist: Number of cells for IVF index (will be capped based on K)
         nprobe: Number of cells to probe for search
         verbose: Whether to show progress
-        is_ann: Toggle IV1
-        is_topk: Toggle IV3
-        is_reuse_l2: Toggle IV2
+        is_ann: Toggle O1
+        is_topk: Toggle O3
+        is_reuse_l2: Toggle O2
         
     Returns:
         selected_indices: Array of selected sample indices
@@ -160,7 +160,7 @@ def optimized_selection(vectors: np.ndarray, K: int, A: int, seed: int = 42,
     rng = np.random.default_rng(seed)
     
     if verbose:
-        print(f"Optimized Selection: N={N}, K={K}, A={A}")
+        print(f"Alternative Selection: N={N}, K={K}, A={A}")
     
     timing = {"kmeans": 0, "selection": 0, "distance_comp": 0, "sorting": 0}
     
@@ -298,7 +298,7 @@ def optimized_selection(vectors: np.ndarray, K: int, A: int, seed: int = 42,
         t0_sort = time.time()
         if num_easy + num_hard > 0:
             if is_topk:
-                # IV3 Optimization: Top-k selection via argpartition instead of full argsort
+                # O3 Optimization: Top-k selection via argpartition instead of full argsort
                 if num_easy == 0:
                     easy_indices = np.empty(0, dtype=int)
                 elif num_easy >= len(cosine_dists):

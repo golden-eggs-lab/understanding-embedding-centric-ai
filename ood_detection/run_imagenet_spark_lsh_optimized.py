@@ -1,4 +1,4 @@
-# Optimized version: Avoid using approxSimilarityJoin, use a more efficient approach
+# Alternative version: Avoid using approxSimilarityJoin, use a more efficient approach
 # Core idea:
 # 1. Pre-compute and collect LSH hashes on the Python side
 # 2. For each query, quickly find candidate buckets on the Python side
@@ -9,7 +9,7 @@ from collections import defaultdict
 
 def compute_knn_lsh_optimized(spark, lsh_model, df_train_hashed, ftrain_spark, test_vectors, K, batch_size):
     """
-    Optimized LSH KNN: Avoid the overhead of approxSimilarityJoin
+    Alternative LSH KNN: Avoid the overhead of approxSimilarityJoin
     """
     # Step 1: Collect LSH hashes to driver (one-time)
     # This is acceptable because training data is only 64k

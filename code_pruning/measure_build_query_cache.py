@@ -139,7 +139,7 @@ def main():
     print(f"  Query: {np.mean(query_times):.4f} ± {np.std(query_times):.4f}s")
     
     print(f"\n{'='*60}")
-    print(f"Optimized (IVF Index)")
+    print(f"Alternative (IVF Index)")
     print(f"{'='*60}")
     ann_build_times, ann_query_times = measure_ann(embeddings, centroids, N_RUNS)
     print(f"  Build times: {ann_build_times}")

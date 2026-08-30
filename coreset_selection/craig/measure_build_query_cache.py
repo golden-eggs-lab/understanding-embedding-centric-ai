@@ -3,7 +3,7 @@ Measure build time, query time, and peak cache memory for CRAIG.
 Uses ACTUAL FacilityLocation / FacilityLocationANN + lazy_greedy_heap.
 
 Baseline:  FacilityLocation + lazy_greedy_heap        (exact, no ANN, no reuse)
-Optimized: FacilityLocationANN + lazy_greedy_heap_ann  (NearPy ANN + residual reuse)
+Alternative: FacilityLocationANN + lazy_greedy_heap_ann  (NearPy ANN + residual reuse)
 """
 
 import time
@@ -50,7 +50,7 @@ def measure_baseline(S, N, B, n_runs):
 
 
 def measure_optimized(S, gradients_class, N, B, n_runs):
-    """Optimized: FacilityLocationANN + lazy_greedy_heap_ann (NearPy ANN + reuse)."""
+    """Alternative: FacilityLocationANN + lazy_greedy_heap_ann (NearPy ANN + reuse)."""
     build_times = []
     query_times = []
 
@@ -69,7 +69,7 @@ def measure_optimized(S, gradients_class, N, B, n_runs):
         sset, vals = lazy_greedy_heap_ann(F, V, B, use_ann=True)
         query_time = time.perf_counter() - t0
         query_times.append(query_time)
-        print(f"    Optimized run {run+1}/{n_runs}: build={build_time:.4f}s, query={query_time:.2f}s, selected={len(sset)}")
+        print(f"    Alternative run {run+1}/{n_runs}: build={build_time:.4f}s, query={query_time:.2f}s, selected={len(sset)}")
 
     return build_times, query_times
 
@@ -125,9 +125,9 @@ def main():
     print(f"{'='*60}")
     bl_build, bl_query = measure_baseline(S, N_class, B_class, N_RUNS)
 
-    # Optimized
+    # Alternative
     print(f"\n{'='*60}")
-    print(f"Optimized (FacilityLocationANN + lazy_greedy_heap_ann)")
+    print(f"Alternative (FacilityLocationANN + lazy_greedy_heap_ann)")
     print(f"{'='*60}")
     opt_build, opt_query = measure_optimized(S, gradients_class, N_class, B_class, N_RUNS)
 
@@ -143,7 +143,7 @@ def main():
     print(f"\n{'='*60}")
     print(f"Summary (class 0: N={N_class}, B={B_class}, d={d})")
     print(f"{'='*60}")
-    print(f"{'':>25s} {'Baseline':>20s} {'Optimized':>20s}")
+    print(f"{'':>25s} {'Baseline':>20s} {'Alternative':>20s}")
     print(f"{'Build (s)':>25s} {'0 (no index)':>20s} {np.mean(opt_build):>15.4f}±{np.std(opt_build):.4f}")
     print(f"{'Query (s)':>25s} {np.mean(bl_query):>15.4f}±{np.std(bl_query):.4f} {np.mean(opt_query):>15.4f}±{np.std(opt_query):.4f}")
     if np.mean(opt_query) > 0:

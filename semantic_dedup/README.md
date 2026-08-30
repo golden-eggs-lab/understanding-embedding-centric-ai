@@ -1,7 +1,7 @@
 # SemDeDup / FairDeDup — Semantic Deduplication
 
 **Task**: Semantic Deduplication (Table 1)  
-**Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Search Results Reuse)  
+**Opportunities**: O1 (Approximation → ANN), O2 (Reuse → Search Results Reuse)  
 **Bottleneck Profile**:
 
 - SemDeDup: B2: 82.5±12.5%, Total: 82.5±12.5%
@@ -11,14 +11,14 @@
 
 - **SemDeDup**: authors' released code from <https://github.com/facebookresearch/SemDeDup>, vendored unchanged in its core algorithmic logic.
 - **FairDeDup**: not publicly released; faithful reimplementation following the algorithmic specification in the original paper, structured as an extension of SemDeDup as described by the authors.
-- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV1: ANN search; IV2: search-result reuse across ε thresholds), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the Alternative execution path (O1: ANN search; O2: search-result reuse across ε thresholds), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
 
-## IV-Aligned Implementation
+## Alternative Implementation
 
-| Invariant | Original Execution                            | IV-Aligned Execution                            |
+| Opportunity | Original Execution                            | Alternative Execution                            |
 | --------- | --------------------------------------------- | ----------------------------------------------- |
-| IV1       | Exact pairwise similarity (FAISS Flat, O(n²)) | ANN (FAISS IVF, nlist=100, nprobe=10)           |
-| IV2       | Recompute similarity for each ε threshold     | Compute once, reuse search results across all ε |
+| O1       | Exact pairwise similarity (FAISS Flat, O(n²)) | ANN (FAISS IVF, nlist=100, nprobe=10)           |
+| O2       | Recompute similarity for each ε threshold     | Compute once, reuse search results across all ε |
 
 ## Datasets
 
@@ -42,32 +42,32 @@ conda env create -f environment.yml && conda activate semdedup
 # Or: pip install numpy pandas torch torchvision faiss-cpu tqdm
 ```
 
-### Exp 1: End-to-End (Table 3)
+### Exp 1: End-to-End (Table 4)
 
 ```bash
 python experiments/run_cifar10_experiment.py --seed 42 --run-id run1
 # Paper: SemDeDup CIFAR-10 86.51s → 0.37s (-99.57%), FairDeDup 543.81s → 14.74s (-97.29%)
 ```
 
-### Exp 2: Ablation (Table 4)
+### Exp 2: Ablation (Table 6)
 
 ```bash
 bash scripts/run_ablation.sh
-# SemDeDup: 86.51s → 1.13s (+IV1) → 28.91s (+IV2) → 0.37s (+All)
+# SemDeDup: 86.51s → 1.13s (+O1) → 28.91s (+O2) → 0.37s (+All)
 ```
 
-### Exp 3: Breakdown (Table 5)
+### Exp 3: Breakdown (Table 7)
 
 > **Note**: The component-level breakdown timing data (Search, index-building, etc.) is automatically logged as part of the console output during **Exp 2** (Ablation). No separate script is required.
 
-### Exp 4: Overhead (Table 6)
+### Exp 4: Overhead (Table 8)
 
 ```bash
 python measure_semdedup_memory.py
 # Reports: build time, query time, peak cache size
 ```
 
-### Exp 5: Cross-Setup (Table 7)
+### Exp 5: Cross-Setup (Table 9)
 
 ```bash
 python experiments/run_cifar10_milvus_experiment.py --seed 42   # Milvus

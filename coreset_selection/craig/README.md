@@ -1,21 +1,21 @@
 # CRAIG — Coreset Selection
 
 **Task**: Coreset Selection (Table 1)  
-**Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Residual Reuse)  
+**Opportunities**: O1 (Approximation → ANN), O2 (Reuse → Residual Reuse)  
 **Bottleneck Profile**: B1: 80.0±9.0%, B2: 1.5±0.5%, Total: 81.5±8.5%
 
 ## Code Origin
 
 - **Upstream**: <https://github.com/baharanm/craig>
 - **Status**: Authors' released code, vendored unchanged in its core algorithmic logic.
-- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV1: ANN indexing; IV2: incremental residual update), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the Alternative execution path (O1: ANN indexing; O2: incremental residual update), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
 
-## IV-Aligned Implementation
+## Alternative Implementation
 
-| Invariant | Original Execution                                      | IV-Aligned Execution                              |
+| Opportunity | Original Execution                                      | Alternative Execution                              |
 | --------- | ------------------------------------------------------- | ------------------------------------------------- |
-| IV1       | Exact pairwise similarity over gradients                | ANN indexing (NearPy LSH / FAISS IVF)             |
-| IV2       | Recompute residual gradient from scratch each iteration | Incremental residual update: R\_{i+1} = R_i - g_j |
+| O1       | Exact pairwise similarity over gradients                | ANN indexing (NearPy LSH / FAISS IVF)             |
+| O2       | Recompute residual gradient from scratch each iteration | Incremental residual update: R\_{i+1} = R_i - g_j |
 
 ## Datasets
 
@@ -32,21 +32,21 @@
 pip install -r requirements.txt
 ```
 
-### Exp 1: End-to-End (Table 3)
+### Exp 1: End-to-End (Table 4)
 
 ```bash
 python run_craig_benchmark.py --backend memory --mode both --n_runs 3
 # Paper: MNIST 53.60s → 48.17s (-10.13%), Fashion-MNIST 57.72s → 49.30s (-14.59%)
 ```
 
-### Exp 4: Overhead (Table 6)
+### Exp 4: Overhead (Table 8)
 
 ```bash
 python measure_build_query_cache.py
 # Reports: build time, query time, peak cache size
 ```
 
-### Exp 5: Cross-Setup (Table 7)
+### Exp 5: Cross-Setup (Table 9)
 
 ```bash
 python run_craig_benchmark.py --backend milvus --mode both --n_runs 3
@@ -81,12 +81,12 @@ python run_ann_hyperparam_craig.py
 
 | File                           | Description                                                         |
 | ------------------------------ | ------------------------------------------------------------------- |
-| `lazy_greedy_nearpy.py`        | Core greedy selection using NearPy LSH (IV1) + residual reuse (IV2) |
-| `lazy_greedy_faiss.py`         | Core greedy selection using FAISS IVF (IV1) + residual reuse (IV2)  |
+| `lazy_greedy_nearpy.py`        | Core greedy selection using NearPy LSH (O1) + residual reuse (O2) |
+| `lazy_greedy_faiss.py`         | Core greedy selection using FAISS IVF (O1) + residual reuse (O2)  |
 | `util_nearpy.py`               | Main integration helpers (loads NearPy implementation)              |
 | `util_faiss.py`                | Main integration helpers (loads FAISS implementation)               |
 | `run_craig_benchmark.py`       | E2E benchmark (Exp 1, 5)                                            |
-| `compare_fashion_mnist_ann.py` | Original vs IV-aligned comparison                                   |
+| `compare_fashion_mnist_ann.py` | Original vs alternative comparison                                   |
 | `measure_build_query_cache.py` | Overhead measurement (Exp 4)                                        |
 | `benchmark_memory_full.py`     | Memory constraint on full MNIST (Exp 6)                             |
 | `benchmark_memory_fast_*.py`   | Fast memory constraint sweep using only class 0 (Exp 6)             |

@@ -709,12 +709,12 @@ def run_deduplication():
     experiments = [
         # (name, algorithm, use_ann, use_cache)
         ("SemDeDup_Original", "semdedup", False, False),
-        ("SemDeDup_+IV2", "semdedup", False, True),
-        ("SemDeDup_+IV1", "semdedup", True, False),
+        ("SemDeDup_+O2", "semdedup", False, True),
+        ("SemDeDup_+O1", "semdedup", True, False),
         ("SemDeDup_+All", "semdedup", True, True),
         ("FairDeDup_Original", "fairdedup", False, False),
-        ("FairDeDup_+IV2", "fairdedup", False, True),
-        ("FairDeDup_+IV1", "fairdedup", True, False),
+        ("FairDeDup_+O2", "fairdedup", False, True),
+        ("FairDeDup_+O1", "fairdedup", True, False),
         ("FairDeDup_+All", "fairdedup", True, True),
     ]
     

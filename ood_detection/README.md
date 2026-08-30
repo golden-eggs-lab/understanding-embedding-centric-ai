@@ -1,20 +1,20 @@
 # KNN-OOD — Out-of-Distribution Detection
 
 **Task**: OOD Detection (Table 1)  
-**Invariants**: IV1 (Approximation → ANN with GPU)  
+**Opportunities**: O1 (Approximation → ANN with GPU)  
 **Bottleneck Profile**: B1: 86.5±8.5%, Total: 86.5±8.5%
 
 ## Code Origin
 
 - **Upstream**: <https://github.com/deeplearning-wisc/knn-ood>
 - **Status**: Authors' released code, vendored unchanged in its core algorithmic logic.
-- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV1: ANN search via FAISS-GPU IVF), and JSON/CSV result-output formatting. The original baseline path (FAISS Flat) is selected via runtime flags and is not modified.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the Alternative execution path (O1: ANN search via FAISS-GPU IVF), and JSON/CSV result-output formatting. The original baseline path (FAISS Flat) is selected via runtime flags and is not modified.
 
-## IV-Aligned Implementation
+## Alternative Implementation
 
-| Invariant | Original Execution          | IV-Aligned Execution                       |
+| Opportunity | Original Execution          | Alternative Execution                       |
 | --------- | --------------------------- | ------------------------------------------ |
-| IV1       | Exact KNN (FAISS Flat, GPU) | ANN (FAISS IVF, nlist=1000, nprobe=5, GPU) |
+| O1       | Exact KNN (FAISS Flat, GPU) | ANN (FAISS IVF, nlist=1000, nprobe=5, GPU) |
 
 ## Datasets
 
@@ -40,10 +40,10 @@ python feat_extract.py --in-dataset cifar10
 python feat_extract_largescale.py --in-dataset imagenet
 ```
 
-### Exp 1: End-to-End (Table 3)
+### Exp 1: End-to-End (Table 4)
 
 ```bash
-# ImageNet — Original vs IV-Aligned
+# ImageNet — Original vs Alternative
 python run_imagenet.py --name resnet50-supcon --in-dataset imagenet \
   --out-datasets inat sun50 places50 dtd --use-faiss-gpu --seed 1
 
@@ -57,11 +57,11 @@ python run_cifar10_knnood.py --use-faiss-gpu
 # Paper: 1.758s → 0.914s (-48.01%)
 ```
 
-### Exp 4: Overhead (Table 6)
+### Exp 4: Overhead (Table 8)
 
 Build/query time is logged within `run_imagenet.py` output.
 
-### Exp 5: Cross-Setup (Table 7)
+### Exp 5: Cross-Setup (Table 9)
 
 ```bash
 python run_milvus_benchmark.py                      # Milvus
@@ -86,7 +86,7 @@ python run_ann_hyperparam_ood.py
 
 | File                                  | Description                                      |
 | ------------------------------------- | ------------------------------------------------ |
-| `run_imagenet.py`                     | Main KNN-OOD with IV1 (ANN IVF + GPU) (Exp 1, 4) |
+| `run_imagenet.py`                     | Main KNN-OOD with O1 (ANN IVF + GPU) (Exp 1, 4) |
 | `run_cifar10_knnood.py`               | CIFAR-10 benchmark (Exp 1)                       |
 | `feat_extract.py`                     | Feature extraction (CIFAR-10)                    |
 | `feat_extract_largescale.py`          | Feature extraction (ImageNet, mmap)              |

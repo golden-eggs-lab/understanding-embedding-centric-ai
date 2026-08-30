@@ -1,6 +1,6 @@
 """
 Step 4: Run SemDeDup using Spark for distributed processing.
-Supports Exact baseline and Optimized (ANN + Reuse) modes.
+Supports Exact baseline and Alternative (ANN + Reuse) modes.
 
 Usage:
     python run_semdedup_spark.py --mode exact       # Baseline: Exact KNN, no caching
@@ -34,7 +34,7 @@ from pyspark.ml.linalg import Vectors, VectorUDT, DenseVector
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='SemDeDup with Spark (Exact/Optimized modes)')
+    parser = argparse.ArgumentParser(description='SemDeDup with Spark (Exact/Alternative modes)')
     parser.add_argument('--mode', type=str, default='exact', choices=['exact', 'optimized'],
                         help='Search mode: exact (baseline), optimized (ANN + Reuse)')
     parser.add_argument('--compare', action='store_true',
@@ -60,7 +60,7 @@ def parse_args():
 
 
 class SparkSemDeDupProcessor:
-    """Spark-based SemDeDup processor with Exact and Optimized modes."""
+    """Spark-based SemDeDup processor with Exact and Alternative modes."""
     
     def __init__(self, config_path, mode='exact', 
                  lsh_tables=2, lsh_bucket_length=2.0,
@@ -200,9 +200,9 @@ class SparkSemDeDupProcessor:
         """
         Exact pairwise cosine similarity using TRUE Spark distributed computation.
         
-        FAIR COMPARISON: Uses same per-candidate loop structure as Optimized.
+        FAIR COMPARISON: Uses same per-candidate loop structure as Alternative.
         - No matmul advantage: each similarity computed individually
-        - Only difference from Optimized: compares with ALL points, not just LSH candidates
+        - Only difference from Alternative: compares with ALL points, not just LSH candidates
         """
         n = len(cluster_reps_np)
         
@@ -227,19 +227,19 @@ class SparkSemDeDupProcessor:
         point_ids_rdd = self.spark.sparkContext.parallelize(range(n), numSlices=min(n, 64))
         
         # Define the per-point computation (runs on executors)
-        # FAIR: Use for-loop, same structure as Optimized
+        # FAIR: Use for-loop, same structure as Alternative
         def compute_max_similarity_loop(point_id):
-            """Compute max similarity using per-candidate loop (same as Optimized)."""
+            """Compute max similarity using per-candidate loop (same as Alternative)."""
             all_vectors = vectors_broadcast.value
             n_points = n_broadcast.value
             point_vec = all_vectors[point_id]
             
-            # Loop through ALL candidates (this is the only difference from Optimized)
+            # Loop through ALL candidates (this is the only difference from Alternative)
             max_sim = 0.0
             for other_id in range(n_points):
                 if other_id == point_id:
                     continue
-                # Per-candidate dot product (same computation as Optimized)
+                # Per-candidate dot product (same computation as Alternative)
                 sim = float(np.dot(all_vectors[other_id], point_vec))
                 if sim > max_sim:
                     max_sim = sim
@@ -262,7 +262,7 @@ class SparkSemDeDupProcessor:
     
     def semdedup_optimized(self, cluster_reps_np, cluster_indices=None):
         """
-        Optimized mode: TRUE Spark distributed with EXECUTOR-SIDE LSH lookup.
+        Alternative mode: TRUE Spark distributed with EXECUTOR-SIDE LSH lookup.
         
         FAIR COMPARISON: 
         - Same per-candidate for-loop structure as Exact (no matmul advantage)
@@ -411,7 +411,7 @@ class SparkSemDeDupProcessor:
             
             elapsed = total_elapsed
         else:
-            # Optimized: compute M once (with ANN + reuse), apply to all eps
+            # Alternative: compute M once (with ANN + reuse), apply to all eps
             # Pass cluster_ids for global LSH index lookup
             M = self.semdedup_optimized(cluster_reps, cluster_indices=cluster_ids.tolist())
             elapsed = time.time() - start_time
@@ -505,21 +505,21 @@ def print_statistics(stats, dataset_size):
 
 
 def compare_results(stats_exact, stats_optimized, dataset_size, eps_list):
-    """Compare Exact vs Optimized results."""
+    """Compare Exact vs Alternative results."""
     print("\n" + "=" * 70)
-    print("COMPARISON: Spark Exact (Baseline) vs Spark Optimized (ANN + Reuse)")
+    print("COMPARISON: Spark Exact (Baseline) vs Spark Alternative (ANN + Reuse)")
     print("=" * 70)
     
     # Time comparison
     speedup = stats_exact['total_time'] / stats_optimized['total_time'] if stats_optimized['total_time'] > 0 else 0
     print(f"\n⏱️  Time Comparison:")
     print(f"   Exact (Baseline): {stats_exact['total_time']:.2f}s")
-    print(f"   Optimized:        {stats_optimized['total_time']:.2f}s")
+    print(f"   Alternative:        {stats_optimized['total_time']:.2f}s")
     print(f"   Speedup:          {speedup:.2f}x")
     
     # Accuracy comparison
     print(f"\n📊 Duplicate Detection Comparison:")
-    print(f"   {'eps':<8} {'Exact':<12} {'Optimized':<12} {'Diff':<10} {'Match %':<10}")
+    print(f"   {'eps':<8} {'Exact':<12} {'Alternative':<12} {'Diff':<10} {'Match %':<10}")
     print(f"   {'-'*52}")
     
     for eps in eps_list:
@@ -567,8 +567,8 @@ def compare_results(stats_exact, stats_optimized, dataset_size, eps_list):
         
         print(f"   Duplicates found by both: {len(intersection):,}")
         print(f"   Only by Exact: {len(only_exact):,}")
-        print(f"   Only by Optimized: {len(only_opt):,}")
-        print(f"   Recall (Optimized finds what Exact finds): {recall:.1f}%")
+        print(f"   Only by Alternative: {len(only_opt):,}")
+        print(f"   Recall (Alternative finds what Exact finds): {recall:.1f}%")
         print(f"   Precision: {precision:.1f}%")
     
     print("=" * 70)
@@ -578,7 +578,7 @@ def main():
     args = parse_args()
     
     if args.compare:
-        print("\n🔬 Running comparison: Spark Exact (Baseline) vs Spark Optimized (ANN + Reuse)\n")
+        print("\n🔬 Running comparison: Spark Exact (Baseline) vs Spark Alternative (ANN + Reuse)\n")
         
         # Run Exact baseline
         processor_exact = SparkSemDeDupProcessor(
@@ -591,7 +591,7 @@ def main():
         print_statistics(stats_exact, processor_exact.dataset_size)
         processor_exact.stop()
         
-        # Run Optimized
+        # Run Alternative
         processor_opt = SparkSemDeDupProcessor(
             args.config, mode='optimized',
             lsh_tables=args.lsh_tables,

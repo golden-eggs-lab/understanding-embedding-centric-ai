@@ -105,7 +105,7 @@ def scip_baseline(embeddings, cfg):
 
 
 def scip_optimized(embeddings, cfg):
-    """Optimized SCIP: IVF search + vectorized distances + TopK."""
+    """Alternative SCIP: IVF search + vectorized distances + TopK."""
     N, D = embeddings.shape
     K = min(cfg.n_clusters, N // 2)
     

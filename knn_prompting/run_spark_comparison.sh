@@ -5,7 +5,7 @@
 
 echo "========================================="
 echo "Spark KNN Prompting Comparison"
-echo "Baseline vs Optimized (Spark internal)"
+echo "Baseline vs Alternative (Spark internal)"
 echo "========================================="
 echo ""
 
@@ -114,7 +114,7 @@ if results and len(results) == 2:
     df_summary = df_summary[cols_to_show]
     
     print("\n" + "="*80)
-    print("SPARK PERFORMANCE COMPARISON (Baseline vs Optimized)")
+    print("SPARK PERFORMANCE COMPARISON (Baseline vs Alternative)")
     print("="*80)
     print(df_summary.to_string(index=False))
     print()
@@ -135,17 +135,17 @@ if results and len(results) == 2:
     print("="*80)
     print(f"Build Time:")
     print(f"  Baseline: {baseline_build:.2f}s (no log pre-computation)")
-    print(f"  Optimized: {opt_build:.2f}s (with log pre-computation)")
+    print(f"  Alternative: {opt_build:.2f}s (with log pre-computation)")
     print(f"  Build overhead: {opt_build - baseline_build:.2f}s")
     print()
     print(f"Inference Time:")
     print(f"  Baseline: {baseline_time:.2f}s (Python loop + runtime log)")
-    print(f"  Optimized: {opt_time:.2f}s (batch + pre-computed log)")
+    print(f"  Alternative: {opt_time:.2f}s (batch + pre-computed log)")
     print(f"  Speedup: {speedup:.2f}x faster")
     print()
     print(f"Accuracy:")
     print(f"  Baseline: {baseline_acc:.2f}%")
-    print(f"  Optimized: {opt_acc:.2f}%")
+    print(f"  Alternative: {opt_acc:.2f}%")
     print(f"  Difference: {opt_acc - baseline_acc:.2f}%")
     print()
     

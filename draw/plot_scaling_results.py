@@ -220,7 +220,7 @@ def load_knn_ood():
 
     # ratio=1.0 from knn_ood_benchmark_3runs.log:
     # Baseline (Exact): total_time = [64.07, 63.61, 64.45]
-    # Optimized (ANN-IVF): total_time = [35.81, 36.47, 36.33]
+    # Alternative (ANN-IVF): total_time = [35.81, 36.47, 36.33]
     # places50 AUROC: baseline=85.24, optimized=84.81
     data[1.0] = {
         "b_time": np.mean([64.07, 63.61, 64.45]),

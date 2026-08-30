@@ -4,7 +4,7 @@ SCIP Aligned End-to-End Experiment — CodeSearchNet Java
 Same pipeline as run_aligned_experiment.py but for Java:
 1. Load data (code + Javadoc) from CodeSearchNet Java
 2. Compute StarEncoder embeddings (multi-GPU)
-3. Run SCIP Baseline vs Optimized
+3. Run SCIP Baseline vs Alternative
 4. Finetune CodeBERT (LoRA) on pruned data
 5. Evaluate with MRR
 
@@ -305,7 +305,7 @@ def scip_baseline(embeddings: np.ndarray, cfg: Config) -> Tuple[np.ndarray, Timi
 
 
 def scip_optimized(embeddings: np.ndarray, cfg: Config) -> Tuple[np.ndarray, TimingResult]:
-    """Optimized SCIP: Faiss IVF + Reuse + TopK"""
+    """Alternative SCIP: Faiss IVF + Reuse + TopK"""
     timing = TimingResult()
     N, D = embeddings.shape
     K = cfg.n_clusters
@@ -405,7 +405,7 @@ def run_scip_comparison(embeddings: np.ndarray, cfg: Config, n_runs: int = 3):
         
         keep_o, timing_o = scip_optimized(embeddings, cfg)
         optimized_times.append(timing_o.total_time)
-        print(f"    Optimized: {timing_o.total_time:.4f}s")
+        print(f"    Alternative: {timing_o.total_time:.4f}s")
         for step, t in timing_o.step_times.items():
             print(f"      {step}: {t:.4f}s")
         
@@ -423,7 +423,7 @@ def run_scip_comparison(embeddings: np.ndarray, cfg: Config, n_runs: int = 3):
     
     print(f"\n  Summary:")
     print(f"  Baseline:  {baseline_avg:.4f}s ± {baseline_std:.4f}s")
-    print(f"  Optimized: {optimized_avg:.4f}s ± {optimized_std:.4f}s")
+    print(f"  Alternative: {optimized_avg:.4f}s ± {optimized_std:.4f}s")
     print(f"  Speedup:   {speedup:.2f}x")
     print(f"  Overlap:   {overlap*100:.1f}%")
     
@@ -624,12 +624,12 @@ def main():
     print(f"\nDataset: CodeSearchNet Java ({len(codes)} samples)")
     print(f"\nAlgorithm:")
     print(f"  Baseline:  {algo_results['baseline_time']:.4f}s ± {algo_results['baseline_std']:.4f}s")
-    print(f"  Optimized: {algo_results['optimized_time']:.4f}s ± {algo_results['optimized_std']:.4f}s")
+    print(f"  Alternative: {algo_results['optimized_time']:.4f}s ± {algo_results['optimized_std']:.4f}s")
     print(f"  Speedup:   {algo_results['speedup']:.2f}x")
     print(f"  Overlap:   {algo_results['overlap']*100:.1f}%")
     print(f"\nCode Search (MRR):")
     print(f"  Baseline:  {baseline_results['mrr']:.4f}")
-    print(f"  Optimized: {optimized_results['mrr']:.4f}")
+    print(f"  Alternative: {optimized_results['mrr']:.4f}")
     
     mrr_diff = abs(baseline_results['mrr'] - optimized_results['mrr'])
     print(f"  Diff:      {mrr_diff:.4f}")

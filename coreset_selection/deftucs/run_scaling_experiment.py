@@ -3,7 +3,7 @@
 DEFT-UCS WikiLarge: Dataset Size Scaling Experiment
 Vary training data ratio: 1.0, 0.7, 0.5, 0.3
 Measure: e2e time (selection only), downstream SARI, recall
-Baseline (numpy) × 1 run, Optimized (FAISS) × 2 runs per ratio
+Baseline (numpy) × 1 run, Alternative (FAISS) × 2 runs per ratio
 """
 
 import os
@@ -77,11 +77,11 @@ def main():
         ratio_results['baseline_selected'] = len(base_idx)
         print(f"  Time: {base_time:.2f}s, Selected: {len(base_idx)}")
         
-        # Optimized × 2
+        # Alternative × 2
         opt_times = []
         opt_orig_idx_list = []
         for run in range(2):
-            print(f"\n[Optimized run{run+1}: FAISS]")
+            print(f"\n[Alternative run{run+1}: FAISS]")
             opt_idx, opt_time = do_selection("optimized", sub_embeddings, n_sub)
             opt_orig_idx = set(subset_idx[opt_idx] if ratio < 1.0 else opt_idx)
             opt_times.append(opt_time)

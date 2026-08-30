@@ -1,10 +1,10 @@
 #!/bin/bash
 # =============================================================================
-# CAL End-to-End Comparison: Original vs IV-Aligned
+# CAL End-to-End Comparison: Original vs Alternative
 # 
-# Reproduces Experiment 1 (Table 3) for CAL on both SST-2 and IMDB.
+# Reproduces Experiment 1 (Table 4) for CAL on both SST-2 and IMDB.
 #   Original:   exact KNN, no probability reuse
-#   IV-Aligned: ANN (BallTree) + probability reuse (IV1 + IV2)
+#   Alternative: ANN (BallTree) + probability reuse (O1 + O2)
 #
 # Usage:
 #   bash run_e2e_comparison.sh                  # Run all (SST-2 + IMDB)
@@ -36,7 +36,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_FILE="e2e_comparison_${TIMESTAMP}.log"
 
 echo "=========================================" | tee -a "${LOG_FILE}"
-echo "CAL E2E: Original vs IV-Aligned"          | tee -a "${LOG_FILE}"
+echo "CAL E2E: Original vs Alternative"          | tee -a "${LOG_FILE}"
 echo "Datasets: ${DATASETS[*]}"                  | tee -a "${LOG_FILE}"
 echo "Runs: ${NUM_RUNS}, Seed: ${SEED}, GPU: ${GPU}" | tee -a "${LOG_FILE}"
 echo "Started at: $(date)"                       | tee -a "${LOG_FILE}"
@@ -89,7 +89,7 @@ for dataset in "${DATASETS[@]}"; do
         # Original: exact KNN, no probability reuse
         run_experiment "${dataset}" "original" "False" "False" ${run}
 
-        # IV-Aligned: ANN (BallTree) + probability reuse
+        # Alternative: ANN (BallTree) + probability reuse
         run_experiment "${dataset}" "iv_aligned" "True" "True" ${run}
     done
 done

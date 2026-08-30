@@ -150,7 +150,7 @@ echo "" | tee -a "${LOG_FILE}"
 run_experiment "spark_exact_nocache" "exact" "False"
 
 # =====================================================
-# Experiment 2: Optimized (Spark LSH + Cache)
+# Experiment 2: Alternative (Spark LSH + Cache)
 # - LSH approximate KNN search
 # - Probability caching enabled
 # =====================================================

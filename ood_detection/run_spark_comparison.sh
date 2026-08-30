@@ -1,6 +1,6 @@
 #!/bin/bash
 # Spark KNN-OOD Benchmark Script
-# Runs both Baseline (ExactKNN) and Optimized (RandomProjection-ANN) experiments
+# Runs both Baseline (ExactKNN) and Alternative (RandomProjection-ANN) experiments
 # using 5% subsampled training data for distributed processing evaluation.
 
 echo "============================================================"
@@ -35,10 +35,10 @@ echo "============================================================"
 echo "Baseline complete at: $(date)"
 echo "============================================================"
 
-# Optimized: Spark RandomProjection-ANN (LSH)
+# Alternative: Spark RandomProjection-ANN (LSH)
 echo ""
 echo "============================================================"
-echo "Running: Optimized (Spark-RandomProjection-ANN)"
+echo "Running: Alternative (Spark-RandomProjection-ANN)"
 echo "============================================================"
 python -u run_imagenet.py \
     --name resnet50-supcon \

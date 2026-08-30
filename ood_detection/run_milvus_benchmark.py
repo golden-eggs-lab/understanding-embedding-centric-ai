@@ -65,7 +65,7 @@ def main():
         '--milvus-metric', 'L2'
     ]
     
-    # Optimized: Milvus IVF_FLAT (ANN)
+    # Alternative: Milvus IVF_FLAT (ANN)
     optimized_cmd = base_cmd.copy() + [
         '--milvus-index-type', 'IVF_FLAT',
         '--milvus-metric', 'L2',
@@ -96,8 +96,8 @@ def main():
         if result['setup_time'] is not None:
             baseline_results['setup_time'].append(result['setup_time'])
         
-        # Optimized
-        result = run_experiment(optimized_cmd, f"Optimized (Milvus-IVF_FLAT) - Run {run_idx + 1}")
+        # Alternative
+        result = run_experiment(optimized_cmd, f"Alternative (Milvus-IVF_FLAT) - Run {run_idx + 1}")
         if result['search_time'] is not None:
             optimized_results['search_time'].append(result['search_time'])
         if result['total_time'] is not None:
@@ -119,7 +119,7 @@ def main():
                 print(f"  {metric}: {mean:.3f} ± {std:.3f}s (n={len(values)})")
     
     print_stats("Baseline (Milvus-FLAT)", baseline_results)
-    print_stats("Optimized (Milvus-IVF_FLAT)", optimized_results)
+    print_stats("Alternative (Milvus-IVF_FLAT)", optimized_results)
     
     # Calculate speedup
     if baseline_results['search_time'] and optimized_results['search_time']:
@@ -129,7 +129,7 @@ def main():
         print(f"\n{'='*60}")
         print(f"SPEEDUP (Search Time): {speedup:.2f}x")
         print(f"  Baseline: {baseline_mean:.3f}s")
-        print(f"  Optimized: {optimized_mean:.3f}s")
+        print(f"  Alternative: {optimized_mean:.3f}s")
         print(f"{'='*60}")
     
     # Previous results for reference

@@ -1,22 +1,22 @@
 # DEFT-UCS — Coreset Selection
 
 **Task**: Coreset Selection (Table 1)  
-**Invariants**: IV1 (Approximation → ANN), IV2 (Reuse → Distance Reuse), IV3 (Partial Order → Top-k)  
+**Opportunities**: O1 (Approximation → ANN), O2 (Reuse → Distance Reuse), O3 (Partial Order → Top-k)  
 **Bottleneck Profile**: B1: 98.7±0.9%, B2: 0.7±0.3%, B3: 0.2±0.2%, Total: 99.5±0.5%
 
 ## Code Origin
 
 - **Upstream**: not publicly released.
 - **Status**: Faithful reimplementation following the algorithmic specification and computational choices in the original paper.
-- **Notes**: The baseline and its IV-aligned variants share the same underlying libraries (FAISS, scikit-learn) and differ only in the execution-level restructurings described in the paper, selected via runtime flags within the same script.
+- **Notes**: The baseline and its Alternative variants share the same underlying libraries (FAISS, scikit-learn) and differ only in the execution-level restructurings described in the paper, selected via runtime flags within the same script.
 
-## IV-Aligned Implementation
+## Alternative Implementation
 
-| Invariant | Original Execution                          | IV-Aligned Execution                             |
+| Opportunity | Original Execution                          | Alternative Execution                             |
 | --------- | ------------------------------------------- | ------------------------------------------------ |
-| IV1       | Exact KMeans (FAISS Flat)                   | ANN KMeans (FAISS IVF, nlist=√K, nprobe=nlist/2) |
-| IV2       | Recompute cosine distances in ranking stage | Reuse L2 distances from KMeans assignment        |
-| IV3       | Full argsort over all samples               | Top-k selection via `argpartition`               |
+| O1       | Exact KMeans (FAISS Flat)                   | ANN KMeans (FAISS IVF, nlist=√K, nprobe=nlist/2) |
+| O2       | Recompute cosine distances in ranking stage | Reuse L2 distances from KMeans assignment        |
+| O3       | Full argsort over all samples               | Top-k selection via `argpartition`               |
 
 ## Datasets
 
@@ -34,7 +34,7 @@ pip install -r requirements.txt
 python prepare_data.py
 ```
 
-### Exp 1: End-to-End (Table 3)
+### Exp 1: End-to-End (Table 4)
 
 ```bash
 bash benchmark_e2e_all.sh
@@ -42,14 +42,14 @@ bash benchmark_e2e_all.sh
 # Paper: CoEDIT 24.98s → 14.51s (-41.91%), WikiLarge 135.64s → 79.43s (-41.44%)
 ```
 
-### Exp 2: Ablation (Table 4)
+### Exp 2: Ablation (Table 6)
 
 ```bash
 python run_ablation.py
-# Tests: Original / +IV1 / +IV2 / +IV3 / +All
+# Tests: Original / +O1 / +O2 / +O3 / +All
 ```
 
-### Exp 3: Breakdown (Table 5)
+### Exp 3: Breakdown (Table 7)
 
 ```bash
 python run_ablation_breakdown.py
@@ -74,7 +74,7 @@ python run_ann_hyperparam_coreset.py
 
 | File                            | Description                                     |
 | ------------------------------- | ----------------------------------------------- |
-| `coreset_selection.py`          | Core selection logic: original and IV-aligned   |
+| `coreset_selection.py`          | Core selection logic: original and alternative   |
 | `benchmark_e2e_all.sh`          | Master script running the decoupled E2E testing |
 | `benchmark_selection.py`        | Decoupled selection script for E2E              |
 | `benchmark_finetune.py`         | Decoupled finetuning script for E2E             |

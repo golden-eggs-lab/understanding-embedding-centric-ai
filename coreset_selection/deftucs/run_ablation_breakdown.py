@@ -180,7 +180,7 @@ def main():
         for k, v in timing.items(): baseline_stats[k].append(v)
         if i == 0: baseline_indices_master = set(indices)
         
-    print(f"Running IV-Aligned (All) {n_runs} times...")
+    print(f"Running Alternative (All) {n_runs} times...")
     for i in range(n_runs):
         timing, indices = run_experiment(vectors, is_opt=True, K=K, A=A)
         for k, v in timing.items(): opt_stats[k].append(v)
@@ -192,10 +192,10 @@ def main():
     print("TABLE 5: TIMING BREAKDOWN (s) - CORESET SELECTION")
     print("="*120)
     
-    headers = ["Task Phase", "-", "B1/IV1", "-", "B2/IV2", "B3/IV3"]
+    headers = ["Task Phase", "-", "B1/O1", "-", "B2/O2", "B3/O3"]
     header_row = f"{headers[0]:<20} {headers[1]:<15} {headers[2]:<15} {headers[3]:<15} {headers[4]:<15} {headers[5]:<15}"
     
-    headers2 = ["", "Baseline Exec.", "IV1-Aligned", "Recall", "Baseline Exec.", "IV2-Aligned", "Baseline Exec.", "IV3-Aligned"]
+    headers2 = ["", "Baseline Exec.", "O1-Aligned", "Recall", "Baseline Exec.", "O2-Aligned", "Baseline Exec.", "O3-Aligned"]
     header_row2 = f"{headers2[0]:<20} {headers2[1]:<16} {headers2[2]:<16} {headers2[3]:<16} {headers2[4]:<16} {headers2[5]:<16} {headers2[6]:<16} {headers2[7]:<16}"
     
     print(header_row2)

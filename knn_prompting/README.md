@@ -1,22 +1,22 @@
 # KNN Prompting — In-Context Learning
 
 **Task**: In-Context Learning (Table 1)  
-**Invariants**: IV2 (Reuse → Intermediate Results Reuse)  
+**Opportunities**: O2 (Reuse → shared-state reuse)  
 **Bottleneck Profile**: B2: 75.0±24.0%, Total: 75.0±24.0%
 
 ## Code Origin
 
 - **Upstream**: <https://github.com/BenfengXu/KNNPrompting>
 - **Status**: Authors' released code, vendored unchanged in its core algorithmic logic.
-- **Our additions**: a unified CLI, timing/profiling instrumentation, the IV-aligned execution path (IV2: pre-compute and reuse log(k_i) across queries), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
+- **Our additions**: a unified CLI, timing/profiling instrumentation, the Alternative execution path (O2: pre-compute and reuse log(k_i) across queries), and JSON/CSV result-output formatting. The original baseline path is selected via runtime flags and is not modified.
 
-## IV-Aligned Implementation
+## Alternative Implementation
 
-| Invariant | Original Execution                          | IV-Aligned Execution                                |
+| Opportunity | Original Execution                          | Alternative Execution                                |
 | --------- | ------------------------------------------- | --------------------------------------------------- |
-| IV2       | Compute log(k_i) at every query (redundant) | Pre-compute log(k_i) once, reuse across all queries |
+| O2       | Compute log(k_i) at every query (redundant) | Pre-compute log(k_i) once, reuse across all queries |
 
-In the KL divergence D_KL(p_test ∥ k_i), the term log(k_i) depends only on the fixed anchor distribution and remains unchanged across queries. The IV-aligned execution materializes log(k_i) during anchor construction and reuses it during inference.
+In the KL divergence D_KL(p_test ∥ k_i), the term log(k_i) depends only on the fixed anchor distribution and remains unchanged across queries. The Alternative execution materializes log(k_i) during anchor construction and reuses it during inference.
 
 ## Datasets
 
@@ -35,7 +35,7 @@ In the KL divergence D_KL(p_test ∥ k_i), the term log(k_i) depends only on the
 pip install torch transformers tqdm
 ```
 
-### Exp 1: End-to-End (Table 3)
+### Exp 1: End-to-End (Table 4)
 
 ```bash
 # Original
@@ -44,7 +44,7 @@ python knn_prompting.py \
   --seed 1 --n_train_shot 32 --n_demo_shot 4 --knn 3 \
   --optimization baseline --output_dir ./output
 
-# IV-Aligned (IV2: pre-computed log reuse)
+# Alternative (O2: pre-computed log reuse)
 python knn_prompting.py \
   --llm_dir /path/to/gpt2-xl --data_dir ./data --dataset sst2 \
   --seed 1 --n_train_shot 32 --n_demo_shot 4 --knn 3 \
@@ -53,17 +53,17 @@ python knn_prompting.py \
 # Paper: SST-2 111.03s → 70.74s (-36.29%), AGNews 144.75s → 71.01s (-50.94%)
 ```
 
-### Exp 2 & Exp 3: Ablation (Table 4) & Component Breakdown (Table 5)
+### Exp 2 & Exp 3: Ablation (Table 6) & Component Breakdown (Table 7)
 
 ```bash
-# Exp 2: Ablation (Original vs IV1 vs All)
+# Exp 2: Ablation (Original vs O1 vs All)
 bash run_comparison.sh
 
-# Exp 3: Component Breakdown (Isolating Intermediate Results Reuse)
+# Exp 3: Component Breakdown (Isolating Reuse)
 python run_breakdown_knnprompting.py --runs 3
 ```
 
-### Exp 5: Cross-Setup (Table 7)
+### Exp 5: Cross-Setup (Table 9)
 
 ```bash
 bash run_milvus_comparison.sh       # Milvus
@@ -82,7 +82,7 @@ python run_cache_benchmark_ratio.py --algorithms KNNPrompting
 ### Batch Comparison (Exp 2)
 
 ```bash
-bash run_comparison.sh              # In-memory: original vs IV-aligned ablation
+bash run_comparison.sh              # In-memory: original vs alternative ablation
 ```
 
 ## Key Files
@@ -91,7 +91,7 @@ bash run_comparison.sh              # In-memory: original vs IV-aligned ablation
 | ------------------------------- | --------------------------------------------------- |
 | `knn_prompting.py`              | Main entry point (Exp 1, 5)                         |
 | `utils/anchor.py`               | Original AnchorStore (computes log(k_i) at runtime) |
-| `utils/anchor_reuse.py`         | IV-aligned: pre-computed log(k_i) reuse             |
+| `utils/anchor_reuse.py`         | alternative: pre-computed log(k_i) reuse             |
 | `utils/anchor_milvus.py`        | Milvus (Exp 5)                                      |
 | `utils/anchor_spark.py`         | Spark (Exp 5)                                       |
 | `run_comparison.sh`             | In-memory comparison / Ablation (Exp 2)             |
